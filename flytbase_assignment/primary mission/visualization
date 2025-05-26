@@ -1,0 +1,33 @@
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.cm as cm
+import numpy as np
+from typing import List
+from data_ingestion import Waypoint
+
+def plot_paths(primary: List[Waypoint], others: List[List[Waypoint]]):
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+
+    def extract_xyz_time(path):
+        return (
+            np.array([wp.x for wp in path]),
+            np.array([wp.y for wp in path]),
+            np.array([wp.z for wp in path]),
+            np.array([wp.t for wp in path])
+        )
+
+    x, y, z, t = extract_xyz_time(primary)
+    ax.scatter(x, y, z, c=t, cmap='viridis', label='Primary Drone', s=50)
+
+    for i, path in enumerate(others):
+        x, y, z, t = extract_xyz_time(path)
+        ax.scatter(x, y, z, c=t, cmap='autumn', label=f'Intruder {i+1}', s=30, marker='^')
+
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Z (Altitude)')
+    plt.title("4D Drone Paths (Color = Time)")
+    ax.legend()
+    plt.colorbar(cm.ScalarMappable(cmap='viridis'), ax=ax, label='Time')
+    plt.show()
