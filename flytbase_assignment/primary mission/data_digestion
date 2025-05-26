@@ -1,0 +1,18 @@
+from typing import List
+from dataclasses import dataclass
+
+@dataclass
+class Waypoint:
+    x: float
+    y: float
+    z: float
+    t: float  # seconds since mission start
+
+@dataclass
+class Mission:
+    waypoints: List[Waypoint]  # must be time-ordered
+
+def generate_paths() -> (List[Waypoint], List[Waypoint]):
+    primary = [Waypoint(x, x, 10 + 0.5 * x, t) for x, t in zip(range(10), range(0, 100, 10))]
+    intruder = [Waypoint(x, x + 1, 10.5, t + 5) for x, t in zip(range(10), range(0, 100, 10))]
+    return primary, intruder
