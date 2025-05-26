@@ -1,0 +1,32 @@
+import random
+from dataclasses import dataclass
+from typing import List
+
+@dataclass
+class Waypoint:
+    x: float
+    y: float
+    z: float
+    t: float  # seconds
+
+@dataclass
+class Mission:
+    drone_id: str
+    waypoints: List[Waypoint]
+
+def generate_random_flight(drone_id: str, start_t: float) -> Mission:
+    waypoints = []
+    x, y, z = random.randint(0, 50), random.randint(0, 50), random.randint(10, 30)
+    for i in range(10):
+        x += random.uniform(-5, 5)
+        y += random.uniform(-5, 5)
+        z += random.uniform(-1, 1)
+        t = start_t + i * 10  # 10s between waypoints
+        waypoints.append(Waypoint(x, y, z, t))
+    return Mission(drone_id, waypoints)
+
+def create_simulated_dataset(n_drones=5) -> List[Mission]:
+    missions = []
+    for i in range(n_drones):
+        missions.append(generate_random_flight(f"drone_{i+1}", start_t=i * 5))
+    return missions
