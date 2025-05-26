@@ -1,0 +1,18 @@
+from typing import List
+from data_ingestion import Waypoint, Mission
+
+def interpolate_path(mission: Mission, time_step=1.0) -> List[Waypoint]:
+    interpolated = []
+    for wp1, wp2 in zip(mission.waypoints, mission.waypoints[1:]):
+        dt = wp2.t - wp1.t
+        steps = int(dt // time_step)
+        for i in range(steps + 1):
+            t = wp1.t + i * time_step
+            if t > wp2.t:
+                break
+            ratio = (t - wp1.t) / dt if dt != 0 else 0
+            x = wp1.x + ratio * (wp2.x - wp1.x)
+            y = wp1.y + ratio * (wp2.y - wp1.y)
+            z = wp1.z + ratio * (wp2.z - wp1.z)
+            interpolated.append(Waypoint(x, y, z, t))
+    return interpolated
